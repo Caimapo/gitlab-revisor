@@ -12,6 +12,7 @@ Options:
   -c --concurrency=<number of workers>      Number of workers[default: 1].
   -d --dest=<dest>
   -f --format=<format>       Format of the print yaml, json, tree [default: yaml].
+  -m --method=<method>       Method of clone {ssh, http} [default: http]
 
 """
 from docopt import docopt
