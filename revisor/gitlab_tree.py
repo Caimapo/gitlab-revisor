@@ -12,7 +12,7 @@ import os
 log = logging.getLogger(__name__)
 
 class GitlabTree:
-    def __init__(self, url, token, includes=[], excludes=[], concurrency=1, in_file=None, method="https"):
+    def __init__(self, url, token, includes=[], excludes=[], concurrency=1, in_file=None, method="http"):
         self.in_file = in_file
         self.method = method
         self.concurrency = concurrency
