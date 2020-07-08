@@ -18,11 +18,12 @@ class GitlabTree:
         self.concurrency = concurrency
         self.excludes = excludes
         self.includes = includes
-        self.token= token
+        self.token = token
         self.url = url
         self.gitlab = Gitlab(url, private_token=token)
         self.root = Node("", root_path="", url=url)
         self.progress = ProgressBar()
+        self.disable_progress = False
 
 # assert start
     def is_included(self, node):
