@@ -33,6 +33,8 @@ class GitlabTree:
                     log.debug(
                         "Matched include path [%s] to node [%s]", include, node.root_path)
                     return True
+        else:
+            return True
 
     def is_excluded(self, node):
         if self.excludes is not None:
@@ -40,7 +42,8 @@ class GitlabTree:
                 if globre.match(exclude, node.root_path):
                     log.debug(
                         "Matched exclude path [%s] to node [%s]", include, node.root_path)
-                    return False
+                    return True
+        return False
 # assert end
 
     def filter_tree(self, parent):
