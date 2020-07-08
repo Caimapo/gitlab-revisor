@@ -38,8 +38,9 @@ if __name__ == '__main__':
         "Reading projects tree from gitlab at [%s]", arguments["<gitlab-url>"])
     tree.load_tree()
     if tree.is_empty():
-        log.fatal("The tree is empty, check your include/exclude patterns or run with more verbosity for debugging")
-        sys.exit(1) 
+        log.fatal(
+            "The tree is empty, check your include/exclude patterns or run with more verbosity for debugging")
+        sys.exit(1)
 
     if arguments["--format"]:
         tree.print_tree(arguments["--format"])
