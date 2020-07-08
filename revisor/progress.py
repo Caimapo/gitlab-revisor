@@ -10,7 +10,7 @@ class ProgressBar:
             self.progress = tqdm(total=total, unit="projects",
                                  bar_format="{desc}: {percentage: .1f}%|{bar:100}| {n_fmt}/{total_fmt}{postfix}", leave=False)
 
-    def update_progress_lenght(self, added):
+    def update_progress_length(self, added):
         if self.progress is not None:
             self.progress.total = self.progress.total + added
             self.progress.refresh()
