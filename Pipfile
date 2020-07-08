@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+autopep8 = "*"
+
+[packages]
+requests = "*"
+docopt = "*"
+python-gitlab = "*"
+pyyaml = "*"
+anytree = "*"
+gitpython = "*"
+globre = "*"
+tqdm = "*"
+
+[requires]
+python_version = "3.8"
