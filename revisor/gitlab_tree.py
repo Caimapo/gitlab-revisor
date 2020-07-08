@@ -8,29 +8,8 @@ import yaml
 import globre
 import logging
 import os
-import enum 
 
 log = logging.getLogger(__name__)
-
-
-class PrintFormat(enum.IntEnum):
-    JSON = 1
-    YAML = 2
-    TREE = 3
-
-    def __str__(self):
-        return self.name.lower()
-
-    def __repr__(self):
-        return str(self)
-
-    @staticmethod
-    def argparse(s):
-        try:
-            return PrintFormat[s.upper()]
-        except KeyError:
-            return s
-
 
 class GitlabTree:
     def __init__(self, url, token, includes=[], excludes=[], concurrency=1, in_file=None, method="https"):
