@@ -59,6 +59,7 @@ class GitlabTree:
         node.root_path = self.root_path(node)
         return node
 # crud start
+
     def add_projects(self, parent, projects):
         for project in projects:
             project_url = project.ssh_url_to_repo if self.method is "ssh" else project.http_url_to_repo
@@ -81,6 +82,7 @@ class GitlabTree:
             self.get_subgroups(subgroup, node)
             self.get_projects(subgroup, node)
 # crud end
+
     def load_gitlab_tree(self):
         groups = self.gitlab.groups.list(as_list=False)
         self.progress.init_progress(len(groups))
