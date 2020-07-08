@@ -81,7 +81,7 @@ class GitlabTree:
 # crud start
     def add_projects(self, parent, projects):
         for project in projects:
-            project_url = project.ssh_url_to_repo if self.method is CloneMethod.SSH else project.http_url_to_repo
+            project_url = project.ssh_url_to_repo if self.method is "ssh" else project.http_url_to_repo
             node = self.make_node(project.name, parent,
                                   url=project_url)
             self.progress.show_progress(node.name, 'project')
