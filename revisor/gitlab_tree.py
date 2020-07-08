@@ -111,12 +111,12 @@ class GitlabTree:
             self.root.leaves))
         self.filter_tree(self.root)
 
-    def print_tree(self, format=PrintFormat.TREE):
-        if format is PrintFormat.TREE:
+    def print_tree(self, format="yaml"):
+        if format == "tree":
             self.print_tree_native()
-        elif format is PrintFormat.YAML:
+        elif format == "yaml":
             self.print_tree_yaml()
-        elif format is PrintFormat.JSON:
+        elif format == "json":
             self.print_tree_json()
         else:
             log.fatal("Invalid print format [%s]", format)
