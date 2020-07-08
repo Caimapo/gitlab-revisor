@@ -18,6 +18,7 @@ from docopt import docopt
 import logging
 import logging.handlers
 from gitlab_tree import GitlabTree
+import sys
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 log = logging.getLogger(__name__)
