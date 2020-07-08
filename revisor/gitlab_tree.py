@@ -33,12 +33,14 @@ class PrintFormat(enum.IntEnum):
 
 
 class GitlabTree:
-    def __init__(self, url, token, includes=[], excludes=[], concurrency=1, in_file=None):
+    def __init__(self, url, token, includes=[], excludes=[], concurrency=1, in_file=None, method="https"):
         self.in_file = in_file
-        self.includes = includes
-        self.excludes = excludes
-        self.url = url
+        self.method = method
         self.concurrency = concurrency
+        self.excludes = excludes
+        self.includes = includes
+        self.token= token
+        self.url = url
         self.gitlab = Gitlab(url, private_token=token)
         self.root = Node("", root_path="", url=url)
         self.progress = ProgressBar()
