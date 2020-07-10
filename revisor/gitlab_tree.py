@@ -1,5 +1,5 @@
 from gitlab import Gitlab
-from anytree import Node, RenderTree
+from anytree import Node, RenderTree, search
 from anytree.exporter import DictExporter, JsonExporter
 from anytree.importer import DictImporter
 from git import sync_tree
@@ -24,24 +24,27 @@ class GitlabTree:
         self.root = Node("", root_path="", url=url)
         self.progress = ProgressBar()
         self.disable_progress = False
+        self.progress = ProgressBar('* loading tree', self.disable_progress)
 
 # assert start
     def is_included(self, node):
+        Flag = False
         if self.includes is not None:
             for include in self.includes:
                 if globre.match(include, node.root_path):
-                    log.debug(
+                    log.info(
                         "Matched include path [%s] to node [%s]", include, node.root_path)
-                    return True
+                    Flag = True
         else:
-            return True
+            Flag = True
+        return Flag
 
     def is_excluded(self, node):
         if self.excludes is not None:
             for exclude in self.excludes:
                 if globre.match(exclude, node.root_path):
-                    log.debug(
-                        "Matched exclude path [%s] to node [%s]", include, node.root_path)
+                    log.info(
+                        "Matched exclude path [%s] to node [%s]", exclude, node.root_path)
                     return True
         return False
 # assert end
@@ -50,6 +53,8 @@ class GitlabTree:
         for child in parent.children:
             if not self.is_included(child):
                 child.parent = None
+            if search.findall(child, filter_= lambda node: not self.is_included(node)):
+                child.parent=None
             if self.is_excluded(child):
                 child.parent = None
             self.filter_tree(child)
@@ -58,8 +63,8 @@ class GitlabTree:
         return "/".join([str(n.name) for n in node.path])
 
     def make_node(self, name, parent, url):
-        node = Node(name=name, parent=parent, url=url)
-        node.root_path = self.root_path(node)
+        node=Node(name=name, parent=parent, url=url, id=id)
+        node.root_path=self.root_path(node)
         return node
 # crud start
 
