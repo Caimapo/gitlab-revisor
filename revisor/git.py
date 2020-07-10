@@ -60,18 +60,16 @@ def clone_or_pull_project(action):
             sys.exit(0)
         except Exception as e:
             log.debug("Error pulling project %s", action.path, exc_info=True)
-            log.error(e)
     else:
         '''
         Clone new project
         '''
-        log.debug("cloning new project %s", path)
-        progress.show_progress(node.name, 'clone')
+        log.debug("cloning new project %s", action.path)
+        progress.show_progress(action.node.name, 'clone')
         try:
-            git.Repo.clone_from(node.url, path)
+            git.Repo.clone_from(action.node.url, action.path)
         except KeyboardInterrupt:
-            log.error("User interrupted")
+            log.fatal("User interrupted")
             sys.exit(0)
         except Exception as e:
-            log.error("Error cloning project %s", path)
-            log.error(e)
+            log.debug("Error cloning project %s", action.path, exc_info=True)
