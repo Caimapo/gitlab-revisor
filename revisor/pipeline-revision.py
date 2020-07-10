@@ -26,15 +26,17 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 log = logging.getLogger(__name__)
 
+def split(list):
+    return list.split(",") if list != "1c" else None
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='revisor v 0.0.1')
     print(arguments)
-    in_file = None
-    ipattern = arguments["--include"] if arguments["--include"] is not None else list()
-    opattern = arguments["--exclude"] if arguments["--exclude"] is not None else list()
+    in_file = arguments["--file"] 
+    ipattern = split(arguments["--include"])
+    opattern = split(arguments["--exclude"])
     tree = GitlabTree(arguments["<gitlab-url>"], arguments["--token"],
-                      ipattern, opattern, arguments["--concurrency"], in_file=in_file, method=arguments["--method"])
+                      includes=ipattern, excludes=opattern, concurrency=int(arguments["--concurrency"]), in_file=in_file, method=arguments["--method"])
     log.debug(
         "Reading projects tree from gitlab at [%s]", arguments["<gitlab-url>"])
     tree.load_tree()
@@ -43,10 +45,7 @@ if __name__ == '__main__':
             "The tree is empty, check your include/exclude patterns or run with more verbosity for debugging")
         sys.exit(1)
 
-    if arguments["--format"]:
+    if arguments["--print"]:
         tree.print_tree(arguments["--format"])
     else:
-        tree.sync_tree(arguments["--dest"])
-
-    print("Finished.")
-    # Para usar los valores simplemente se invoca al dict arguments
+        tree.sync_tree(arguments["<dest>"])
