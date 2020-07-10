@@ -1,18 +1,19 @@
 """Gitlab .
 
 Usage:
-  pipeline-revision.py <gitlab-url> [options]
+  pipeline-revision.py <gitlab-url> [options] <dest>
 
 Options:
   -h --help                  Show this screen.
   -v --version               Show version.
   -t --token=<access_token>  Token access to gitlab instance.
-  -i --include=<comma_list>  Included files.       
-  -e --exclude=<comma_list>  Excluded files.
+  -i --include=<csv>  Included files [default: 1c].       
+  -e --exclude=<comma_list>  Excluded files. [default: 1c].
   -c --concurrency=<number of workers>      Number of workers[default: 1].
-  -d --dest=<dest>
-  -f --format=<format>       Format of the print yaml, json, tree [default: yaml].
+  -a --file=<file>           File previous input
+  --format=<format>       Format of the print yaml, json, tree [default: yaml].
   -m --method=<method>       Method of clone {ssh, http} [default: http]
+  --print                    Save tree
 
 """
 from docopt import docopt
