@@ -10,8 +10,12 @@ log = logging.getLogger(__name__)
 
 progress = ProgressBar('* syncing projects')
 
-def sync_tree(root, dest):
-    progress.init_progress(len(root.leaves))
+
+class GitAction:
+    def __init__(self, node, path):
+        self.node = node
+        self.path = path
+
 def sync_tree(root, dest, concurrency=1, disable_progress=False):
     if not disable_progress:
         progress.init_progress(len(root.leaves))
