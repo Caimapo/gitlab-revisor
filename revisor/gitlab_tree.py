@@ -62,7 +62,7 @@ class GitlabTree:
     def root_path(self, node):
         return "/".join([str(n.name) for n in node.path])
 
-    def make_node(self, name, parent, url):
+    def make_node(self, name, parent, url, id=-1):
         node=Node(name=name, parent=parent, url=url, id=id)
         node.root_path=self.root_path(node)
         return node
@@ -70,9 +70,9 @@ class GitlabTree:
 
     def add_projects(self, parent, projects):
         for project in projects:
-            project_url = project.ssh_url_to_repo if self.method is "ssh" else project.http_url_to_repo
-            node = self.make_node(project.name, parent,
-                                  url=project_url)
+            project_url=project.ssh_url_to_repo if self.method == "ssh" else project.http_url_to_repo
+            node=self.make_node(project.name, parent,
+                                  url=project_url, id=project.id)
             self.progress.show_progress(node.name, 'project')
 
     def get_projects(self, group, parent):
