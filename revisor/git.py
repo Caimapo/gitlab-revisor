@@ -45,21 +45,21 @@ def is_git_repo(path):
         return False
 
 
-def clone_or_pull_project(node, path):
-    if is_git_repo(path):
+def clone_or_pull_project(action):
+    if is_git_repo(action.path):
         '''
         Update existing project
         '''
-        log.debug("updating existing project %s", path)
-        progress.show_progress(node.name, 'update')
+        log.debug("updating existing project %s", action.path)
+        progress.show_progress(action.node.name, 'pull')
         try:
-            repo = git.Repo(path)
+            repo = git.Repo(action.path)
             repo.remotes.origin.pull()
         except KeyboardInterrupt:
-            log.error("User interrupted")
+            log.fatal("User interrupted")
             sys.exit(0)
         except Exception as e:
-            log.error("Error pulling project %s", path)
+            log.debug("Error pulling project %s", action.path, exc_info=True)
             log.error(e)
     else:
         '''
