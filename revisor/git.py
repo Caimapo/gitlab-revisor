@@ -26,16 +26,17 @@ def sync_tree(root, dest, concurrency=1, disable_progress=False):
     log.debug("Syncing projects took [%s]", elapsed)
 
 
-def sync_tree_internal(root, dest):    
+def get_git_actions(root, dest):
+    actions = []
     for child in root.children:
         path = "%s%s" % (dest, child.root_path)
         if not os.path.exists(path):
             os.makedirs(path)
         if child.is_leaf:
-            clone_or_pull_project(child, path)
+            actions.append(GitAction(child, path))            
         if not child.is_leaf:
-            sync_tree_internal(child, dest)
-
+            actions.extend(get_git_actions(child, dest))
+    return actions
 
 def is_git_repo(path):
     try:
@@ -44,6 +45,19 @@ def is_git_repo(path):
     except git.InvalidGitRepositoryError:
         return False
 
+def create_security_branch(action):
+    if is_git_repo(action.path):
+        '''
+        Update existing project with a new branch in site
+        '''
+        log.debug("updating existing project %s", action.path)
+        progress.show_progress(action.node.name, 'pull')
+        try:
+            repo = gitlab.project.branches.create({'branch': 'security', 'ref': 'master'})
+            repo.remotes.origin.pull()
+        except KeyboardInterrupt:
+            log.fatal("User interrupted")
+            sys.exit(0)
 
 def clone_or_pull_project(action):
     if is_git_repo(action.path):
