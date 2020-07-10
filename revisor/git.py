@@ -4,15 +4,22 @@ import sys
 import subprocess
 import git
 from progress import ProgressBar
+import concurrent.futures
 
 log = logging.getLogger(__name__)
 
-progress = ProgressBar()
+progress = ProgressBar('* syncing projects')
 
 def sync_tree(root, dest):
     progress.init_progress(len(root.leaves))
-    sync_tree_internal(root, dest)
-    progress.finish_progress()
+def sync_tree(root, dest, concurrency=1, disable_progress=False):
+    if not disable_progress:
+        progress.init_progress(len(root.leaves))
+    actions = get_git_actions(root, dest)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=concurrency) as executor:
+        executor.map(create_security_branch, actions)
+    elapsed = progress.finish_progress()
+    log.debug("Syncing projects took [%s]", elapsed)
 
 
 def sync_tree_internal(root, dest):    
