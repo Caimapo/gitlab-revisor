@@ -16,7 +16,8 @@ class GitAction:
         self.node = node
         self.path = path
 
-def sync_tree(root, dest, concurrency=1, disable_progress=False):
+
+def sync_action(root, action, dest, concurrency=1, disable_progress=False):
     if not disable_progress:
         progress.init_progress(len(root.leaves))
     actions = get_git_actions(root, dest)
@@ -33,10 +34,11 @@ def get_git_actions(root, dest):
         if not os.path.exists(path):
             os.makedirs(path)
         if child.is_leaf:
-            actions.append(GitAction(child, path))            
+            actions.append(GitAction(child, path))
         if not child.is_leaf:
             actions.extend(get_git_actions(child, dest))
     return actions
+
 
 def is_git_repo(path):
     try:
@@ -44,6 +46,7 @@ def is_git_repo(path):
         return True
     except git.InvalidGitRepositoryError:
         return False
+
 
 def create_security_branch(action):
     if is_git_repo(action.path):
@@ -53,11 +56,14 @@ def create_security_branch(action):
         log.debug("updating existing project %s", action.path)
         progress.show_progress(action.node.name, 'pull')
         try:
-            repo = gitlab.project.branches.create({'branch': 'security', 'ref': 'master'})
-            repo.remotes.origin.pull()
+            project = gitlab.projects.get(action.node.id)
+            repo = project.branches.create(
+                {'branch': 'security', 'ref': 'master'})
+            # repo.branches.create({'branch': 'security', 'ref': 'master'})
         except KeyboardInterrupt:
             log.fatal("User interrupted")
             sys.exit(0)
+
 
 def clone_or_pull_project(action):
     if is_git_repo(action.path):
