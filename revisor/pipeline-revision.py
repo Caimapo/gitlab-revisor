@@ -14,6 +14,7 @@ Options:
   -f --file=<file>           File previous input, this should be yaml format
   --format=<format>          Format of the output {yaml, json, tree} [default: yaml].
   -m --method=<method>       Method of clone {ssh, http} [default: http]
+  --dry-run                  
   -a --action=<action>       Action to apply in batch to the gitlab instance [default: print]
 
 """
@@ -34,7 +35,6 @@ def split(list):
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='revisor v 0.0.1')
-    print(arguments)
     in_file = arguments["--file"]
     ipattern = split(arguments["--include"])
     opattern = split(arguments["--exclude"])
@@ -49,7 +49,7 @@ if __name__ == '__main__':
         log.fatal("The tree is empty, check your include/exclude patterns")
         sys.exit(1)
 
-    if arguments["--print"]:
+    if arguments["--dry-run"]:
         tree.print_tree(arguments["--format"])
     else:
         tree.sync_tree(arguments["--action"], arguments["<dest>"])
