@@ -3,7 +3,8 @@ import os
 import sys
 import subprocess
 import git
-from gitlab import Gitlab
+import yaml
+from gitlab import Gitlab, GitlabError, GitlabAuthenticationError
 from progress import ProgressBar
 import concurrent.futures
 
@@ -35,8 +36,10 @@ def sync_action(root, action, dest, concurrency=1, disable_progress=False):
     elapsed = progress.finish_progress()
     log.debug("Syncing projects took [{}]".format(elapsed))
 
+
 def PRINT():
     print("To do")
+
 
 def get_git_actions(root, dest):
     actions = []
@@ -59,6 +62,7 @@ def is_git_repo(path):
     except git.InvalidGitRepositoryError:
         print('ero')
         return False
+
 
 def is_gitlab_project(node):
     return True if node.id > 0 else False
