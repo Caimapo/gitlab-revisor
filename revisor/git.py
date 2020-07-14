@@ -101,7 +101,7 @@ def create_security_branch(action):
         except :
             log.fatal(sys.exc_info())    
 
-def alter_cicd(file):
+
 def alter_cicd(file, url):
     yaml_file=yaml.safe_load(file.decode().decode('utf-8'))
     print("\n")
@@ -177,13 +177,15 @@ def pull_project_ci_file(action):
         log.debug("updating existing project {}".format(action.path))
         progress.show_progress(action.node.name, 'pull')
         try:
-            repo = git.Repo(action.path)
+            repo=git.Repo(action.path)
             repo.remotes.origin.pull()
         except KeyboardInterrupt:
             log.fatal("User interrupted")
             sys.exit(0)
         except Exception as e:
-            log.debug("Error pulling project {}".format(action.path), exc_info=True)
+            log.debug("Error pulling project {}".format(
+                action.path), exc_info=True)
+
 
 def clone_or_pull_project(action):
     if is_git_repo(action.path):
@@ -193,13 +195,14 @@ def clone_or_pull_project(action):
         log.debug("updating existing project {}".format(action.path))
         progress.show_progress(action.node.name, 'pull')
         try:
-            repo = git.Repo(action.path)
+            repo=git.Repo(action.path)
             repo.remotes.origin.pull()
         except KeyboardInterrupt:
             log.fatal("User interrupted")
             sys.exit(0)
         except Exception as e:
-            log.debug("Error pulling project {}".format(action.path), exc_info=True)
+            log.debug("Error pulling project {}".format(
+                action.path), exc_info=True)
     else:
         '''
         Clone new project
@@ -212,4 +215,5 @@ def clone_or_pull_project(action):
             log.fatal("User interrupted")
             sys.exit(0)
         except Exception as e:
-            log.debug("Error cloning project {}".format(action.path), exc_info=True)
+            log.debug("Error cloning project {}".format(
+                action.path), exc_info=True)
