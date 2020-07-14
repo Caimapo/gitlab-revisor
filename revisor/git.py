@@ -102,7 +102,72 @@ def create_security_branch(action):
             log.fatal(sys.exc_info())    
 
 def alter_cicd(file):
-    return file
+def alter_cicd(file, url):
+    yaml_file=yaml.safe_load(file.decode().decode('utf-8'))
+    print("\n")
+    if (yaml_file["include"][0]["file"] == "/all-in-one/all-cicd-javaGradle-whmg-on-prem.yml"):
+        print("\n+{}".format(url))
+        yaml_file=add_security_steps(yaml_file, 'java')
+
+    if (yaml_file["include"][0]["file"] == "/all-in-one/all-cicd-nodejs-npm-whmg-on-prem.yml"):
+        print("\n+{}".format(url))
+        yaml_file=add_security_steps(yaml_file, 'node')
+    if (yaml_file["include"][0]["file"] == "/all-in-one/all-cicd-nodejs-npm-whmg.yml"):
+        print("\n+{}".format(url))
+        yaml_file=add_security_steps(yaml_file, 'node')
+    print("\n ---")
+    dump_file=yaml.safe_dump(
+        yaml_file, default_flow_style=False, sort_keys=False)
+    print(dump_file)
+    print("\n ---")
+    return dump_file
+
+
+def add_security_steps(data, lang):
+    data["detect_secrets"]={
+        'extends': '.detect_secrets_seecas',
+        'variables': [
+        {
+            'SECAAS_PLUGIN_ID': '$SECAAS_PLUGIN_ID',
+            'SECAAS_PLUGIN_SECRET': '$SECAAS_PLUGIN_SECRET',
+            'BUSINESS': '$SECAAS_BUSINESS_ID',
+        }
+    ],
+        'only': {
+            'refs': ['devsecops']
+        }
+    }
+    data["dependency_scanning"]={
+    'extends': '.dependency_cli_secaas',
+    'variables': [
+        {
+            'DC_TARGET_LANG': lang,
+            'SECAAS_PLUGIN_ID': '$SECAAS_PLUGIN_ID',
+            'SECAAS_PLUGIN_SECRET': '$SECAAS_PLUGIN_SECRET',
+            'BUSINESS': '$SECAAS_BUSINESS_ID',
+        }
+    ],
+    'only': {
+        'refs': ['devsecops']
+        }
+    }
+    data["sast_scanning"]={
+    'extends': '.veracode_{lang}'.format(lang=lang),
+    'variables': [{
+            'DC_TARGET_LANG': lang,
+            'VERSION': '$CI_PROJECT_NAME-$CI_PROJECT_NAMESPACE-$CI_JOB_ID',
+            'SECAAS_PLUGIN_ID': '$SECAAS_PLUGIN_ID',
+            'SECAAS_PLUGIN_SECRET': '$SECAAS_PLUGIN_SECRET',
+            'BUSINESS': '$SECAAS_BUSINESS_ID',
+            'SANDBOX_NAME': '${CI_PROJECT_NAME}-${CI_PROJECT_NAMESPACE}',
+            'PROJECT': '${CI_PROJECT_NAME}-${CI_PROJECT_NAMESPACE}',
+            'BRANCH': '$CI_COMMIT_REF_SLUG'
+        }],
+    'only': {
+        'refs': ['devsecops']
+        }
+    }
+    return data
 
 def pull_project_ci_file(action):
     if is_git_repo(action.path):
