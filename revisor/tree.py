@@ -127,7 +127,7 @@ class GitlabTree:
         elif format == "json":
             self.print_tree_json()
         else:
-            log.fatal("Invalid print format [%s]", format)
+            log.fatal("Invalid print format [{}}]".format(format))
 
     def print_tree_native(self):
         for pre, _, node in RenderTree(self.root):
