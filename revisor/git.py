@@ -4,6 +4,7 @@ import sys
 import subprocess
 import git
 import yaml
+import csv
 from gitlab import Gitlab, GitlabError, GitlabAuthenticationError
 from progress import ProgressBar
 import concurrent.futures
@@ -85,8 +86,14 @@ def create_security_branch(action):
             #     {'branch': 'security', 'ref': ref})
             # project.branches.delete('security')
             try:
-                try:
-                    cicd = project.files.get(file_path='.gitlab-ci.yml', ref=ref)
+def dump_to_csv(project, path, url, lang, step):
+    try:
+      with open(path, newline='', mode='a') as file:
+          writer = csv.writer(file, delimiter=',')
+          writer.writerow([project, url, lang, step])
+    except Exception as e:
+        log.info("Error trying to openning the file output\nmsg:{}".format(sys.exc_info()))
+
                 except:
                     log.info("file doesnt exist {}".format(sys.exc_info()))
                      
