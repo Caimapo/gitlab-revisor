@@ -37,6 +37,14 @@ log = logging.getLogger(__name__)
 def split(list):
     return list.split(",") if list != "1c" else None
 
+def auth_gitlab(url, token):
+    try:
+        log.debug("Loading credentials")
+        gitlab = Gitlab(url, private_token=token)
+        return gitlab
+    except GitlabAuthenticationError:
+        log.fatal("[Invalid credentials]: {}".format(sys.exc_info()))
+        sys.exit(1)
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='revisor v 0.0.1')
