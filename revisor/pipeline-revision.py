@@ -37,6 +37,27 @@ log = logging.getLogger(__name__)
 def split(list):
     return list.split(",") if list != "1c" else None
 
+def include_paths(path):
+    includes = []
+    try:
+      with open(path, newline='') as file:
+          includes = [row[0] for row in csv.reader(file)]
+    except Exception as e:
+        # No file, trying parse
+        includes = split(path)
+        log.debug("Error trying to openning the file input")
+    return includes
+
+def exclude_paths(path):
+    excludes = []
+    try:
+      with open(path, newline='') as file:
+          excludes = [row[0] for row in csv.reader(file)]
+    except Exception as e:
+        excludes = split(path)
+        log.debug("Error trying to openning the file input")
+    return excludes
+
 def auth_gitlab(url, token):
     try:
         log.debug("Loading credentials")
