@@ -86,4 +86,9 @@ if __name__ == '__main__':
     if arguments["--dry-run"]:
         tree.print_tree(arguments["--format"])
     else:
-        tree.sync_tree(arguments["--action"], arguments["<dest>"])
+        if arguments["branch"]:
+            tree.sync_tree("branch", arguments)
+        if arguments["clone"]:
+            tree.sync_tree("clone", arguments)
+        if arguments["plugins"]:
+            tree.sync_tree("plugins", arguments)
