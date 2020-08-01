@@ -69,15 +69,23 @@ def auth_gitlab(url, token):
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='revisor v 0.0.1')
+    # print(arguments)
     in_file = arguments["--file"]
-    ipattern = split(arguments["--include"])
-    opattern = split(arguments["--exclude"])
-    url = os.environ.get('GITLAB_URL', arguments["<gitlab-url>"])
+    ipattern= []
+    # ifile = os.environ.get('INCLUDE_FILES',include_paths(arguments["--include"]))
+    ipattern = include_paths(arguments["--include"])
+    opattern = exclude_paths(arguments["--exclude"])
+    url = os.environ.get('GITLAB_URL', arguments["--gitlab"])
     token = os.environ.get('GITLAB_TOKEN', arguments["--token"])
-    tree = GitlabTree(url, token, includes=ipattern, excludes=opattern, concurrency=int(
+    
+    gitlab = auth_gitlab(url, token)
+    arguments["gitlab"]  = gitlab
+    arguments["token"]  = token
+    arguments["url_base"]  = url
+    tree = Tree(url, gitlab, includes=ipattern, excludes=opattern, concurrency=int(
         arguments["--concurrency"]), in_file=in_file, method=arguments["--method"])
     log.debug("Reading projects tree from gitlab at [{url}]".format(
-        url=arguments["<gitlab-url>"]))
+        url=url))
     tree.load_tree()
     if tree.is_empty():
         log.fatal("The tree is empty, check your include/exclude patterns")

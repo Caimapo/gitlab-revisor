@@ -16,20 +16,21 @@ progress = ProgressBar('* syncing projects')
 emo = ["\U0001F331",'\U0001F332', '\U0001F333', '\U0001F334', '\U0001F335','\U0001F33E', '\U0001F33F', '\U0001F340', '\U0001F341']
 gitlab_keywords = ["image", "services", "stages", "types", "before_script", "after_script", "variables", "cache", "include" ]
 class GitAction:
-    def __init__(self, node, path):
+    def __init__(self, node, path, arguments):
         self.node = node
         self.path = path
+        self.arguments = arguments
 
 
-def sync_action(root, action, dest, concurrency=1, disable_progress=False):
+def sync_action(root, action, arguments, disable_progress=False):
     if not disable_progress:
         progress.init_progress(len(root.leaves))
-    actions = get_git_actions(root, dest)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=concurrency) as executor:
-        if action == 'print':
-            executor.map(PRINT, actions)
-        if action == 'create_branch':
-            executor.map(create_security_branch, actions)
+    actions = get_git_actions(root, arguments["<path>"], arguments)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=int(arguments["--concurrency"])) as executor:
+        if action == 'plugins':
+            executor.map(plugins_action, actions)
+        if action == 'branch':
+            executor.map(security_branch, actions)
         if action == 'clone':
             executor.map(clone_or_pull_project, actions)
         else:

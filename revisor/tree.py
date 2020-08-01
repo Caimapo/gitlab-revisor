@@ -1,4 +1,3 @@
-from gitlab import Gitlab
 from anytree import Node, RenderTree, search
 from anytree.exporter import DictExporter, JsonExporter
 from anytree.importer import DictImporter
@@ -12,15 +11,15 @@ import os
 log = logging.getLogger(__name__)
 
 
-class GitlabTree:
-    def __init__(self, url, token, includes=[], excludes=[], concurrency=1, in_file=None, method="http"):
+class Tree:
+    def __init__(self, url, gitlab, includes=[], excludes=[], concurrency=1, in_file=None, method="http"):
         self.in_file = in_file
         self.method = method
         self.concurrency = concurrency
         self.excludes = excludes
         self.includes = includes
         self.url = url
-        self.gitlab = Gitlab(url, private_token=token)
+        self.gitlab = gitlab
         self.root = Node("", root_path="", url=url)
         self.disable_progress = False
         self.progress = ProgressBar('* loading tree', self.disable_progress)
@@ -146,6 +145,6 @@ class GitlabTree:
         exporter = JsonExporter(indent=2, sort_keys=True)
         print(exporter.export(self.root))
 
-    def sync_tree(self, action, dest):
+    def sync_tree(self, action, arguments):
         log.debug("Going to do [ {action} ] in [ {group_num} ] groups and [ {project_num} ] projects".format(action=action, group_num=len(self.root.descendants)-len(self.root.leaves), project_num=len(self.root.leaves)))
-        sync_action(self.root, action, dest, concurrency=self.concurrency, disable_progress=self.disable_progress)
+        sync_action(self.root, action, arguments, disable_progress=self.disable_progress)
