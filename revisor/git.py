@@ -184,6 +184,45 @@ def add_security_steps(data, lang):
     }
     return data
 
+def add_veracode(yaml_file, lang):
+    yaml_file["include"].extend( [
+             {'file': '/template/.ci-template.yml',
+              'project': 'tech-corp/seguridad-de-la-informacion/ci-templates/veracode-plugin',
+              'ref': 'v-2.0-19.6.5.8'}])
+    # Deduplication of dictionaries              
+    yaml_file["include"] = [dict(t) for t in {tuple(d.items()) for d in yaml_file["include"]}]
+    # End deduplication of dictionaries
+
+    if(lang.lower() == 'java'):
+        yaml_file["veracode-analysis"]={
+        'extends': '.veracode',
+        'stage': 'test',
+        'image': 'gcr.io/gsc-gitlab-ce/cicd/secaas/plugins/veracode-cli:v-2.0-19.6.5.8',
+        'variables': {
+                'FILE': 'build/libs/$APP_FULL_NAME',
+            },
+        'tags': ['docker'],
+        'only': {
+            'refs': ['devsecops']
+            }
+        }
+    if(lang.lower() == 'node'):
+        yaml_file["veracode-analysis"]={
+        'extends': '.veracode-zip',
+        'stage': 'test',
+        'image': 'gcr.io/gsc-gitlab-ce/cicd/secaas/plugins/veracode-cli:v-2.0-19.6.5.8',
+        'before_script': ['zip -r src.zip src/*'],
+        'variables': {
+                'FILE': 'src.zip',
+            },
+        'tags': ['docker'],
+        'only': {
+            'refs': ['devsecops']
+            }
+        }
+
+    return yaml_file
+
 def pull_project_ci_file(action):
     if is_git_repo(action.path):
         '''
