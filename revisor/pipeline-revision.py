@@ -1,29 +1,34 @@
 """Gitlab .
 
 Usage:
-  pipeline-revision.py <gitlab-url> [options] <dest>
-  pipeline-revision.py [options] <dest>
+  pipeline-revision.py [options] branch ( --list | (--create --name=<branch_name> --ref=<branch_ref>) | --remove --name=<branch_name>)
+  pipeline-revision.py [options] clone <path>
+  pipeline-revision.py [options] plugins ((--list --name=<branch_name>) | (--check --name=<branch_name>) | (--push --name=<branch_name>)) [--sast | --dependency-check | --detect-secrets | --add-veracode] [ --recursive ]
 
 Options:
   -h --help                  Show this screen.
   -v --version               Show version.
+  -g --gitlab=<gitlab>       URL to gitlab instance.
   -t --token=<access_token>  Token access to gitlab instance.
-  -i --include=<csl>         Included files in a comma separated string [default: 1c].
-  -e --exclude=<csl>         Excluded files in a comma separated string. [default: 1c].
+  -i --include=<csv>         Included files in a comma separated string or csv path. [default: 1c].
+  -e --exclude=<csv>         Excluded files in a comma separated string or csv path. [default: 1c].
   -c --concurrency=<number of workers>      Number of workers[default: 1].
   -f --file=<file>           File previous input, this should be yaml format
   --format=<format>          Format of the output {yaml, json, tree} [default: yaml].
   -m --method=<method>       Method of clone {ssh, http} [default: http]
   --dry-run                  
-  -a --action=<action>       Action to apply in batch to the gitlab instance [default: print]
-
+  -r --recursive            Recursive pipeline inspector
+  -o --output=<output>      Output CSV File
+  --throttle=<time>      throttle [default: 360]
 """
 from docopt import docopt
 import logging
 import logging.handlers
-from tree import GitlabTree
+from tree import Tree
 import sys
 import os
+import csv
+from gitlab import Gitlab
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 log = logging.getLogger(__name__)
