@@ -131,6 +131,12 @@ def alter_cicd(file, url):
     print("\n ---")
     return dump_file
 
+def print_file_content(file_object, url):
+    yaml_file=yaml.safe_load(file_object.decode().decode('utf-8'))
+    dump_file=yaml.safe_dump(
+        yaml_file, default_flow_style=False, sort_keys=False)
+    print(dump_file)
+    print("\n ---")
 
 def add_security_steps(data, lang):
     data["detect_secrets"]={
