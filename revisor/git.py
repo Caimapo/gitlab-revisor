@@ -5,6 +5,7 @@ import subprocess
 import git
 import yaml
 import csv
+import random
 from gitlab import Gitlab, GitlabError, GitlabAuthenticationError
 from progress import ProgressBar
 import concurrent.futures
@@ -12,8 +13,8 @@ import concurrent.futures
 log = logging.getLogger(__name__)
 
 progress = ProgressBar('* syncing projects')
-
-
+emo = ["\U0001F331",'\U0001F332', '\U0001F333', '\U0001F334', '\U0001F335','\U0001F33E', '\U0001F33F', '\U0001F340', '\U0001F341']
+gitlab_keywords = ["image", "services", "stages", "types", "before_script", "after_script", "variables", "cache", "include" ]
 class GitAction:
     def __init__(self, node, path):
         self.node = node
